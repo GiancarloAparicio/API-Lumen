@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -49,6 +51,89 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof ModelNotFoundException) {
+            $model = strtolower(class_basename($exception->getModel()));
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower(404),
+                        'title' => 'Model error'  . $model,
+                        'details' => $exception->getMessage()
+                    ]
+                ]
+            ], 404);
+        }
+
+        if ($exception instanceof QueryException) {
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower(500),
+                        'title' => 'BD query error ',
+                        'details' => $exception->getMessage()
+                    ]
+                ]
+            ], 500);
+        }
+
+        if ($exception instanceof HttpException) {
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower($exception->getStatusCode()),
+                        'title' => 'Path error, not found ',
+                        'details' => $exception->getMessage()
+                    ]
+                ]
+            ], $exception->getStatusCode());
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower(401),
+                        'title' => 'Authentication Error',
+                        'details' => $exception->getMessage()
+                    ]
+                ]
+            ], 401);
+        }
+        if ($exception instanceof AuthorizationException) {
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower(403),
+                        'title' => 'Authorization Error',
+                        'details' => $exception->getMessage()
+                    ]
+                ]
+            ], 403);
+        }
+
+        if ($exception instanceof ValidationException) {
+            return response()->json([
+                'errors' => [
+                    [
+                        'status' => strtolower($exception->status),
+                        'title' => 'Validation Error',
+                        'details' => $exception->validator->errors()->getMessages()
+                    ]
+                ]
+            ], $exception->status);
+        }
+
+        if (env('APP_DEBUG')) {
+            return parent::render($request, $exception);
+        }
+        return response()->json([
+            'errors' => [
+                [
+                    'status' => strtolower(500),
+                    'title' => 'Unexpected error. Try later',
+                    'details' => $exception->getMessage()
+                ]
+            ]
+        ], 500);
     }
 }

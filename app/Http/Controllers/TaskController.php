@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
+use App\Traits\Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class TaskController extends Controller
 {
+    use Response;
+
+    private $task;
+
+    public function __construct(Task $task)
+    {
+        $this->task = $task;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,6 +24,7 @@ class TaskController extends Controller
      */
     public function index()
     {
+        return $this->task::get();
     }
 
     /**

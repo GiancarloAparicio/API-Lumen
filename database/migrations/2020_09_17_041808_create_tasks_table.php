@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTokenUserTable extends Migration
+class CreateTasksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateTokenUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('token_user', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('token');
+            $table->string('title');
+            $table->string('description');
+            $table->string('name');
+            $table->softDeletes();
             $table->timestamps();
-
-            $table->foreignId('user_id')
-                ->reference('user_id')
-                ->on('users');
         });
     }
 
@@ -32,6 +30,6 @@ class CreateTokenUserTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('token_user');
+        Schema::dropIfExists('tasks');
     }
 }

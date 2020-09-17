@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class UserValidator
+class LoginValidator
 {
 
     public function __construct(Request $request)
@@ -29,7 +29,6 @@ class UserValidator
         );
 
         if ($validator->fails()) {
-
             throw new ValidationException(
                 $validator,
                 new JsonResponse($validator->errors()->getMessages(), 422)
@@ -42,9 +41,9 @@ class UserValidator
     public function rules()
     {
         return [
-            'name' => ['required'],
-            'email' => ['required', 'email', 'unique:users,email' . $this->request->id],
-            'password' => ['required', 'min:5', 'confirmed']
+
+            'email' => ['required', 'email'],
+            'password' => ['required', 'min:5']
         ];
     }
 
@@ -52,15 +51,11 @@ class UserValidator
     {
 
         return [
-            'name.required' => 'The :attribute field is required.',
-
             'email.required' => 'The :attribute field is required.',
-            'email.unique' => 'The :attribute has already been taken.',
             'email.email' => 'The :attribute must be a valid email address.',
 
             'password.required' => 'The :attribute field is required.',
             'password.min' => 'The :attribute must be at least :min.',
-            'password.confirmed' => 'The :attribute confirmation does not match.',
         ];
     }
 }

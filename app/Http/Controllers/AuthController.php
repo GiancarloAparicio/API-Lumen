@@ -2,42 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
-use App\Validator\UserValidator;
+use App\Services\UserServices;
 
 class AuthController extends Controller
 {
 
     /**
-     * @param  App\Validator\UserValidator  $validator
-     * @param  \Illuminate\Http\Request  $request
-     */
-    public function __construct(UserValidator $validator, Request $request)
-    {
-        $this->validator = $validator;
-        $this->request = $request;
-    }
-
-    /**
-     * Login user
+     * Login user , parameters are received by dependency injection
      * 
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Object $userService
      * @return \Illuminate\Http\Response
      */
-    public function login()
+    public function login(UserServices $userService)
     {
-        return $this->request;
+        return $userService->loginUser();
     }
 
     /**
-     * Register User
+     * Register User, parameters are received by dependency injection
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Object $userService
      * @return \Illuminate\Http\Response
      */
-    public function register()
+    public function register(UserServices $userService)
     {
-        return $this->request;
+        return $userService->createUser();
     }
 }
