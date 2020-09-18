@@ -3,16 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
 
-    // protected table = 'Task';
+    use HasFactory;
+    protected $table = 'tasks';
 
-    // protected primaryKey = 'Task _id';
+    // protected $primaryKey = 'Task _id';
 
-    // protected fillable = [];
+    protected $fillable = [
+        'title', 'description', 'name'
+    ];
 
-    // public timestamps = false;
+    // public $timestamps = false;
 
 }

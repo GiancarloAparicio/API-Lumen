@@ -28,4 +28,15 @@ class AuthController extends Controller
     {
         return $userService->createUser();
     }
+
+    /**
+     * Register User, parameters are received by dependency injection
+     *
+     * @param  Object $userService
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(UserServices $userService)
+    {
+        return $userService->logoutUser();
+    }
 }

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
-
+use App\Repositories\UserRepository;
 use App\Validator\LoginValidator;
 use App\Validator\UserValidator;
 use Illuminate\Support\Facades\Hash;
@@ -18,15 +18,18 @@ class UserServices
     private $user;
     private $loginValidator;
     private $userValidator;
+    private $userRepository;
 
     public function __construct(
         User $user,
         LoginValidator $loginValidator,
-        UserValidator $userValidator
+        UserValidator $userValidator,
+        UserRepository $userRepository
     ) {
         $this->user = $user;
         $this->loginValidator = $loginValidator;
         $this->userValidator = $userValidator;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -35,11 +38,11 @@ class UserServices
      */
     public function createUser()
     {
-        $user = $this->userValidator->validate();
-        $user['password'] = Hash::make($user['password']);
-        $user = $this->user::create($user);
+        $userCurrent = $this->userValidator->validate();
+        $userCurrent['password'] = Hash::make($userCurrent['password']);
+        $userCurrent = $this->user::create($userCurrent);
 
-        return $this->successResponse('user', $user, 201);
+        return $this->successResponse('user', $userCurrent, 201);
     }
 
     /**
@@ -48,17 +51,24 @@ class UserServices
      */
     public function loginUser()
     {
-        $userValidate = $this->loginValidator->validate();
-        $user = $this->user::where('email', $userValidate["email"])->first();
+        $validate = $this->loginValidator->validate();
+        $user = $this->userRepository->getUserWithEmail($validate["email"]);
 
-        if ($this->userCorrect($user, $userValidate)) {
+        if ($this->userCorrect($user['password'], $validate['password'])) {
             $user['api_token'] = $this->getToken();
             $user->save();
 
-            return $this->successResponse('user', $user, 200)->header('Token', $user['api_token']);
+            return $this->successResponse('user', $user, 200)
+                ->header('Token', $user['api_token']);
         }
+    }
 
-        return $this->errorResponse('Authentication Error', 401);
+    public function logoutUser()
+    {
+        $user = $this->userRepository->getUserWithToken(request('api_token'));
+        $user['api_token'] = null;
+        $user->save();
+        return $this->successResponse('Closed session: ', $user, 205);
     }
 
     /**
@@ -72,8 +82,8 @@ class UserServices
     /**
      *  Check if the user exists and if the password matches the account hash
      */
-    public function userCorrect($user,  $userValidate)
+    public function userCorrect(String  $userValidate, String $user)
     {
-        return isset($user) && Hash::check($userValidate['password'], $user['password']);
+        return isset($user) && Hash::check($userValidate, $user);
     }
 }

@@ -17,18 +17,25 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->post('/login', [
+$router->post('api/v1/login', [
     'uses' => 'AuthController@login',
     'as' => 'login'
 ]);
 
-$router->post('/register', [
+$router->post('api/v1/register', [
     'uses' => 'AuthController@register',
     'as' => 'register'
 ]);
 
+
 //Version: 1.0.0   --   Path: api/v1/...
 $router->group(['prefix' => 'api/v1', 'middleware' => 'auth'], function () use ($router) {
+
+    //Controller: auth
+    $router->post('/logout', [
+        'uses' => 'AuthController@logout',
+        'as' => 'logout'
+    ]);
 
     //Controller: task
     $router->group(['prefix' => 'task'], function () use ($router) {
