@@ -29,7 +29,7 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence(3, true),
             'name' => $this->faker->name,
-            'description' => $this->faker->paragraph,
+            'description' => $this->faker->sentence(12, true),
         ];
     }
 }

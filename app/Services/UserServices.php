@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Role;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Validator\LoginValidator;
@@ -38,10 +39,11 @@ class UserServices
      */
     public function createUser()
     {
+
         $userCurrent = $this->userValidator->validate();
         $userCurrent['password'] = Hash::make($userCurrent['password']);
         $userCurrent = $this->user::create($userCurrent);
-
+        $userCurrent->roles()->attach(Role::where('name', 'user')->first());
         return $this->successResponse('user', $userCurrent, 201);
     }
 

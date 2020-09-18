@@ -29,12 +29,14 @@ class TaskService
 
     public function getAllTasks()
     {
-        return $this->task::get();
+        $task = $this->task::get();
+        return $this->successResponse('Show task all', $task, 200);
     }
 
     public function getTaskById(int $id)
     {
-        return $this->task::findOrFail($id);
+        $task = $this->task::findOrFail($id);
+        return $this->successResponse('Show task', $task, 200);
     }
 
     public function updateTaskById(String $id)
