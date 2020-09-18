@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Repositories\UserRepository;
 use App\Services\TaskService;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+
+    private $userCurrent;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userCurrent = $userRepository->getUserWithToken(request('api_token'));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,6 +22,7 @@ class TaskController extends Controller
      */
     public function index(TaskService $taskService)
     {
+        $this->userCurrent->authorizeRoles(['user', 'moderator', 'admin']);
         return $taskService->getAllTasks();
     }
 
@@ -26,6 +34,7 @@ class TaskController extends Controller
      */
     public function store(TaskService $taskService)
     {
+        $this->userCurrent->authorizeRoles(['moderator', 'admin']);
         return $taskService->createTask();
     }
 
@@ -37,6 +46,7 @@ class TaskController extends Controller
      */
     public function show(int $id, TaskService $taskService)
     {
+        $this->userCurrent->authorizeRoles(['user', 'moderator', 'admin']);
         return $taskService->getTaskById($id);
     }
 
@@ -49,6 +59,7 @@ class TaskController extends Controller
      */
     public function update(int $id, TaskService $taskService)
     {
+        $this->userCurrent->authorizeRoles(['admin']);
         return $taskService->updateTaskById($id);
     }
 
@@ -60,6 +71,7 @@ class TaskController extends Controller
      */
     public function destroy(int $id, TaskService $taskService)
     {
+        $this->userCurrent->authorizeRoles(['admin']);
         return $taskService->deleteTask($id);
     }
 }

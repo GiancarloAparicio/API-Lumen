@@ -33,6 +33,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     /**
+     * Add this method to the Role model
+     * public function users()
+     * {
+     *    return $this->belongsToMany(User::class)->withTimestamps();
+     * }
+     */
+
+    /**
+     * When creating a user, assign a default role ('user') after creating it 
+     * $user->roles()->attach(Role::where('name', 'user')->first());
+     */
+
+    /**
      * Associate a user with a role, using the pivot table
      * @return App\Models\Role
      */
@@ -68,9 +81,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 }
             }
         } else {
-            if ($this->roles()->where('name', $roles)->first()) {
+            if ($this->hasRole($roles)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     *  Check if the user has the assigned role
+     * @param String role
+     * @return Boolean
+     */
+    public function hasRole(String $role)
+    {
+
+        if ($this->roles()->where('name', $role)->first()) {
+            return true;
         }
         return false;
     }
