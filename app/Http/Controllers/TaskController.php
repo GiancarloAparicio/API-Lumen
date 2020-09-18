@@ -2,29 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Traits\Response;
+
+use App\Services\TaskService;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    use Response;
-
-    private $task;
-
-    public function __construct(Task $task)
-    {
-        $this->task = $task;
-    }
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(TaskService $taskService)
     {
-        return $this->task::get();
+        return $taskService->getAllTasks();
     }
 
     /**
@@ -33,9 +24,9 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TaskService $taskService)
     {
-        //
+        return $taskService->createTask();
     }
 
     /**
@@ -44,9 +35,9 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(int $id)
+    public function show(int $id, TaskService $taskService)
     {
-        //
+        return $taskService->getTaskById($id);
     }
 
     /**
@@ -56,9 +47,9 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(int $id, TaskService $taskService)
     {
-        //
+        return $taskService->updateTaskById($id);
     }
 
     /**
@@ -67,8 +58,8 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(int $id)
+    public function destroy(int $id, TaskService $taskService)
     {
-        //
+        return $taskService->deleteTask($id);
     }
 }

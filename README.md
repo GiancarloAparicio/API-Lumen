@@ -54,6 +54,7 @@ JSON
 > {
 >
 > "email":"admin@demo.com",
+>
 > "password":"123456789"
 >
 > }
