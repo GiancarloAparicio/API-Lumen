@@ -54,7 +54,7 @@ class UserServices
         $validate = $this->loginValidator->validate();
         $user = $this->userRepository->getUserWithEmail($validate["email"]);
 
-        if ($this->userCorrect($user['password'], $validate['password'])) {
+        if ($this->userCorrect($validate, $user)) {
             $user['api_token'] = $this->getToken();
             $user->save();
 
@@ -82,8 +82,8 @@ class UserServices
     /**
      *  Check if the user exists and if the password matches the account hash
      */
-    public function userCorrect(String  $userValidate, String $user)
+    public function userCorrect($userValidate,  $user)
     {
-        return isset($user) && Hash::check($userValidate, $user);
+        return isset($user) && Hash::check($userValidate['password'], $user['password']);
     }
 }
