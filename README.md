@@ -10,6 +10,10 @@ Create users and populate the tables
 
     php artisan db:seed
 
+Create users and populate the tables
+
+    php -S localhost:8080 -t ./public/
+
 ## Users:
 
 > -   Account: user@demo.com
@@ -27,7 +31,7 @@ Create users and populate the tables
 
 Route
 
-    /api/v1/register  (POST)
+    localhost:8080/api/v1/register  (POST)
 
 JSON
 
@@ -47,7 +51,7 @@ JSON
 
 Route
 
-    /api/v1/login    (POST)
+    localhost:8080/api/v1/login    (POST)
 
 JSON
 
@@ -63,7 +67,7 @@ JSON
 
 Route
 
-    /api/v1/logout    (POST)
+    localhost:8080/api/v1/logout    (POST)
 
 JSON
 
@@ -77,8 +81,62 @@ JSON
 
 ### Create
 
+moderator, admin
+
+    localhost:8080/api/v1/task     (POST)
+
+JSON
+
+> {
+>
+> "api_token":"3cf2f....121da7",
+>
+> "name":"cafe",
+>
+> "title":"Book cafe",
+>
+> "description":"cafe lorem..."
+>
+> }
+
 ### Read
+
+user, moderator, admin
+
+    localhost:8080/api/v1/task     (GET)
+
+    localhost:8080/api/v1/task/{id}     (GET)
 
 ### Update
 
+moderator, admin
+
+    localhost:8080/api/v1/task/{id}   (PUT)
+
+JSON
+
+> {
+>
+> "api_token":"3cf2f....121da7",
+>
+> "name":"cafe",
+>
+> "title":"Book cafe",
+>
+> "description":"cafe lorem..."
+>
+> }
+
 ### Delete
+
+admin
+
+    localhost:8080/api/v1/task/{id}   (DELETE)
+
+JSON
+
+> {
+>
+> "api_token":"3cf2f....121da7",
+>
+> }

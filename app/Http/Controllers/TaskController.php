@@ -59,7 +59,7 @@ class TaskController extends Controller
      */
     public function update(int $id, TaskService $taskService)
     {
-        $this->userCurrent->authorizeRoles(['admin']);
+        $this->userCurrent->authorizeRoles(['moderator', 'admin']);
         return $taskService->updateTaskById($id);
     }
 
